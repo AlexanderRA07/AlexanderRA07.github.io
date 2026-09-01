@@ -12,6 +12,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
   margin: 0;
   background: var(--bg);
@@ -50,7 +54,25 @@ a:hover {
 .hero .tagline {
   font-size: 1.25rem;
   color: var(--text-muted);
-  margin: 0;
+  margin: 0 0 1.75rem;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 640px;
+  margin: 0 auto;
+  gap: 1rem;
+}
+
+.hero-actions .social-links {
+  justify-content: flex-start;
+}
+
+.hero .skip-about {
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .projects {
@@ -113,6 +135,100 @@ a:hover {
   margin-bottom: 2rem;
 }
 
+/* ── About Me: sticky-stage scroll section (see scroll-demo.html for the reference mechanic) ── */
+#about-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: var(--accent);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+#about-runway {
+  height: 400vh;
+  position: relative;
+}
+
+#about-stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.about-panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+
+.about-panel .eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.about-panel h2 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  margin: 0 0 1rem;
+}
+
+.about-panel p {
+  max-width: 42ch;
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+#ap0 { background: var(--bg); }
+#ap1 { background: var(--bg-alt); }
+#ap2 { background: var(--bg); }
+#ap3 { background: var(--bg-alt); }
+
+.back-to-top {
+  position: fixed;
+  top: 50%;
+  right: 1.5rem;
+  transform: translateY(-50%);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  background: var(--bg-alt);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 100px;
+  padding: 0.6rem 1.1rem;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.back-to-top:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
 footer {
   padding: 2rem;
   text-align: center;
@@ -148,5 +264,21 @@ footer {
 
   .hero {
     padding: 4rem 1.5rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .back-to-top {
+    top: auto;
+    bottom: 1.25rem;
+    right: 1rem;
+    transform: none;
+  }
+
+  .about-panel p {
+    font-size: 0.9rem;
   }
 }

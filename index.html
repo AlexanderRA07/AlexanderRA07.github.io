@@ -18,6 +18,13 @@
   <header class="hero">
     <h1>Alexander Albert</h1>
     <p class="tagline">Software Engineer</p>
+    <div class="hero-actions">
+      <div class="social-links">
+        <a class="btn" href="https://github.com/AlexanderRA07">GitHub</a>
+        <a class="btn" href="https://www.linkedin.com/in/alexander-albert-931900237/">LinkedIn</a>
+      </div>
+      <a class="btn skip-about" href="#about">↓ About Me</a>
+    </div>
   </header>
 
   <section class="projects">
@@ -41,11 +48,120 @@
     </div>
   </section>
 
-  <footer>
-    <div class="social-links">
-      <a class="btn" href="https://github.com/AlexanderRA07">GitHub</a>
-      <a class="btn" href="https://www.linkedin.com/in/alexander-albert-931900237/">LinkedIn</a>
+  <section id="about">
+    <div id="about-progress-bar"></div>
+    <div id="about-runway">
+      <div id="about-stage">
+
+        <div class="about-panel" id="ap0">
+          <div class="eyebrow">About Me</div>
+          <h2>Hey, I'm Alexander.</h2>
+          <p>Scroll to learn a bit more about who I am and what I do. ↓</p>
+        </div>
+
+        <div class="about-panel" id="ap1">
+          <div class="eyebrow">Who I Am</div>
+          <h2>Placeholder bio</h2>
+          <p>TODO: swap in a couple sentences about your background, interests, and what got you into software.</p>
+        </div>
+
+        <div class="about-panel" id="ap2">
+          <div class="eyebrow">What I Do</div>
+          <h2>Placeholder skills</h2>
+          <p>TODO: swap in the languages, frameworks, and tools you work with most.</p>
+        </div>
+
+        <div class="about-panel" id="ap3">
+          <div class="eyebrow">Let's Connect</div>
+          <h2>Thanks for scrolling.</h2>
+          <p>Find me on GitHub and LinkedIn below, or head back up to check out the projects.</p>
+        </div>
+
+      </div>
     </div>
-  </footer>
+    <button id="back-to-top" class="back-to-top" type="button">↑ Top</button>
+  </section>
+
+  <script>
+    (function () {
+      const runway = document.getElementById('about-runway');
+      const progressBar = document.getElementById('about-progress-bar');
+      const backToTop = document.getElementById('back-to-top');
+      const panelEls = Array.from(document.querySelectorAll('.about-panel'));
+      const panels = panelEls.map((el, i) => ({
+        el,
+        from: i / panelEls.length,
+        to: (i + 1) / panelEls.length,
+      }));
+
+      function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+      function lerp(a, b, t) { return a + (b - a) * t; }
+      function easeInOut(t) { return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
+
+      function getOpacity(progress, from, to) {
+        const fadeLen = 0.12;
+        if (progress < from || progress > to) return 0;
+        let o = 1;
+        if (progress < from + fadeLen) o = Math.min(o, (progress - from) / fadeLen);
+        if (progress > to - fadeLen) o = Math.min(o, (to - progress) / fadeLen);
+        return clamp(easeInOut(o), 0, 1);
+      }
+
+      function getY(progress, from, to) {
+        const fadeLen = 0.12;
+        if (progress <= from) return 18;
+        if (progress >= from + fadeLen) return 0;
+        return lerp(18, 0, easeInOut((progress - from) / fadeLen));
+      }
+
+      let ticking = false;
+      function onScroll() {
+        if (!ticking) {
+          requestAnimationFrame(update);
+          ticking = true;
+        }
+      }
+
+      function update() {
+        ticking = false;
+        const rect = runway.getBoundingClientRect();
+        const scrollable = runway.offsetHeight - window.innerHeight;
+        const progress = clamp(-rect.top / scrollable, 0, 1);
+        const visible = rect.top < window.innerHeight && rect.bottom > 0;
+
+        progressBar.style.width = (visible ? progress * 100 : 0).toFixed(1) + '%';
+        backToTop.classList.toggle('visible', visible);
+
+        panels.forEach((p) => {
+          const op = getOpacity(progress, p.from, p.to);
+          const y = getY(progress, p.from, p.to);
+          p.el.style.opacity = op;
+          p.el.style.transform = `translateY(${y}px)`;
+          p.el.style.pointerEvents = op > 0.5 ? 'auto' : 'none';
+        });
+      }
+
+      backToTop.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      const skipAbout = document.querySelector('.skip-about');
+      if (skipAbout) {
+        skipAbout.addEventListener('click', function (e) {
+          e.preventDefault();
+          const top = runway.getBoundingClientRect().top + window.scrollY + window.innerHeight * 0.5;
+          window.scrollTo({ top, behavior: 'auto' });
+          requestAnimationFrame(update);
+        });
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll);
+
+      panels[0].el.style.opacity = 1;
+      panels[0].el.style.transform = 'translateY(0)';
+      update();
+    })();
+  </script>
 </body>
 </html>
